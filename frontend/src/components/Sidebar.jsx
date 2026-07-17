@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MessageSquarePlus } from "lucide-react";
 import ConversationList from "./ConversationList";
 import {
@@ -9,7 +9,7 @@ import {
 function Sidebar({ selectedChat, setSelectedChat }) {
   const [chats, setChats] = useState([]);
 
-  async function loadChats() {
+  const loadChats = useCallback(async () => {
     try {
       const data = await getConversations();
       setChats(data);
@@ -21,11 +21,11 @@ function Sidebar({ selectedChat, setSelectedChat }) {
     } catch (err) {
       console.error(err);
     }
-  }
+  }, [selectedChat, setSelectedChat]);
 
   useEffect(() => {
     loadChats();
-  }, []);
+  }, [loadChats]);
 
   async function handleNewChat() {
     try {
@@ -34,7 +34,6 @@ function Sidebar({ selectedChat, setSelectedChat }) {
       await loadChats();
 
       setSelectedChat(chat.id);
-
     } catch (err) {
       console.error(err);
       alert("Failed to create chat");
@@ -66,7 +65,6 @@ function Sidebar({ selectedChat, setSelectedChat }) {
 
       {/* Recent */}
       <div className="flex-1 overflow-y-auto px-5">
-
         <h2 className="mb-4 text-sm font-bold tracking-widest">
           RECENT
         </h2>
@@ -76,7 +74,6 @@ function Sidebar({ selectedChat, setSelectedChat }) {
           activeId={selectedChat}
           onSelect={setSelectedChat}
         />
-
       </div>
 
       {/* Footer */}
